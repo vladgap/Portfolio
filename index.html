@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My R&D Portfolio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 30px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+        .project-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, border-color 0.2s;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        .project-card:hover {
+            transform: translateY(-3px);
+            border-color: #38bdf8;
+            background: #263349;
+        }
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f0c403; /* Твой фирменный желтый */
+            margin-bottom: 5px;
+            display: block;
+        }
+        .project-desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .footer {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>R&D Projects</h1>
+
+    <div class="container">
+        
+        <!-- Проект 1 -->
+        <a href="HTML_templates/HTML%20Swiper%20demo%201.html" class="project-card">
+            <span class="project-title">Swiper Demo 1</span>
+            <span class="project-desc">Презентация с 3 рамками, адаптированная под мобильные устройства.</span>
+        </a>
+
+        <!-- Место для будущих проектов -->
+        <!-- 
+        <a href="Project_Name/index.html" class="project-card">
+            <span class="project-title">Название проекта</span>
+            <span class="project-desc">Краткое описание того, что внутри.</span>
+        </a> 
+        -->
+
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Vladimir Gaponenko | Powered by GitHub Pages
+    </div>
+
+</body>
+</html>
