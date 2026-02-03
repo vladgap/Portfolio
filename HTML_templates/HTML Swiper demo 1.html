@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>Swiper Demo</title>
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <style>
+    :root {
+      --main-bg: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      --text-color: #f0c403;
+      --header-color: #dff706;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Rubik', system-ui, sans-serif;
+      background: var(--main-bg);
+      color: var(--text-color);
+      overflow: hidden;
+    }
+
+    .swiper {
+      width: 100%;
+      height: 100%;
+    }
+
+    .swiper-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 255, 0, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* === КОНТЕЙНЕР СЛАЙДА === */
+    .slide-content {
+      width: 100%;
+      max-width: 1400px;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 20px;
+      direction: rtl;
+    }
+
+    /* === ЗАГОЛОВОК === */
+    .header-box {
+      grid-column: 1 / -1;
+      text-align: right;
+      border: 2px dashed rgba(255,255,255,0.6);
+      padding: 15px 20px;
+      border-radius: 8px;
+    }
+
+    .header-box h2 {
+      color: var(--header-color);
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin: 0;
+    }
+
+    .header-box h3 {
+      color: #ddd;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      margin: 5px 0 0 0;
+    }
+
+    /* === ТЕКСТОВАЯ РАМКА === */
+    .text-box {
+      border: 2px dashed rgba(255,255,255,0.6);
+      padding: 20px;
+      border-radius: 8px;
+      text-align: right;
+      overflow-y: auto;
+    }
+
+    .text-box ul {
+      list-style-position: inside;
+      padding: 0;
+    }
+
+    .text-box li {
+      font-size: clamp(1rem, 2.5vw, 1.8rem);
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+    }
+
+    .text-box li::marker {
+      color: #885ad1;
+    }
+
+    /* === ВИЗУАЛЬНАЯ РАМКА === */
+    .visual-box {
+      border: 2px dashed rgba(255,255,255,0.6);
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .visual-box img,
+    .visual-box video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(248, 3, 3, 0.25);
+    }
+
+    /* === ТИТУЛЬНЫЙ СЛАЙД === */
+    .title-slide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 2rem;
+    }
+
+    .title-slide h1 {
+      color: var(--header-color);
+      font-size: clamp(2rem, 6vw, 4rem);
+    }
+
+    .title-slide h3 {
+      color: var(--text-color);
+      font-size: clamp(1rem, 3vw, 2rem);
+      font-weight: 400;
+      max-width: 80%;
+    }
+
+    /* === НАВИГАЦИЯ === */
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #007aff;
+    }
+
+    .swiper-pagination-bullet {
+      background: #fff;
+      opacity: 0.5;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: #007aff;
+      opacity: 1;
+    }
+
+    /* === АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ === */
+    @media (max-width: 768px) {
+      .slide-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+      }
+
+      .text-box,
+      .visual-box {
+        grid-column: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="swiper">
+  <div class="swiper-wrapper">
+
+    <!-- === СЛАЙД 1: ТИТУЛЬНЫЙ === -->
+    <div class="swiper-slide">
+      <div class="title-slide">
+        <h1>Demo презентация<br>с 3 рамками</h1>
+        <h3>
+          Картинка/график слева, заголовок и текст справа.<br>
+          Адаптировано для мобильных через Swiper.js
+        </h3>
+      </div>
+    </div>
+
+    <!-- === СЛАЙД 2: БАЗОВЫЙ === -->
+    <div class="swiper-slide">
+      <div class="slide-content">
+        
+        <div class="header-box">
+          <h2>כותרת של שקופית</h2>
+          <h3>כותרת משנה</h3>
+        </div>
+
+        <div class="text-box">
+          <ul>
+            <li>נקודה ראשונה להסבר</li>
+            <li>נקודה שנייה – אותו גודל, אותה מסגרת</li>
+            <li>אפשר גם טקסט חופשי בלי bullets</li>
+            <li>תמונה עם קוד inline דרך base64</li>
+          </ul>
+        </div>
+
+        <div class="visual-box">
+          <img src="pic2.jpg" alt="Картинка">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- === СЛАЙД 3: КВАДРАТНАЯ КАРТИНКА === -->
+    <div class="swiper-slide">
+      <div class="slide-content">
+        
+        <div class="header-box">
+          <h2>דוגמה עם תמונה ריבועית</h2>
+        </div>
+
+        <div class="text-box">
+          <ul>
+            <li>כאן אפשר לכתוב טקסט רציף בפסקה אחת</li>
+            <li>והוא עדיין יישאר בתוך המסגרת</li>
+            <li>אם תרצה bullets, פשוט תחליף ל־ul</li>
+          </ul>
+        </div>
+
+        <div class="visual-box">
+          <img src="crystal2.JPG" alt="Квадратная картинка">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- === СЛАЙД 4: ВИДЕО === -->
+    <div class="swiper-slide">
+      <div class="slide-content">
+        
+        <div class="header-box">
+          <h2>כאן אני משחק עם גודל המסגרות</h2>
+        </div>
+
+        <div class="text-box">
+          <ul>
+            <li>כאן המסגרת של הטקסט יותר צרה</li>
+            <li>והמסגרת של התמונה יותר רחבה</li>
+            <li>את כל המספרים משנים ישירות ב־style</li>
+          </ul>
+        </div>
+
+        <div class="visual-box">
+          <video src="centrifuge1.mp4" 
+                 controls 
+                 loop 
+                 muted 
+                 playsinline>
+          </video>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Навигация -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  const swiper = new Swiper('.swiper', {
+    loop: false,
+    speed: 600,
+    keyboard: { enabled: true },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    mousewheel: true,
+    direction: 'horizontal',
+  });
+</script>
+
+</body>
+</html>

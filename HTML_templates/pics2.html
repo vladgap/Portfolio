@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>דמו: מצגת עם סוגי תמונות שונים</title>
+  <style>
+    /* ====== ערכת צבעים שחור-אפור ====== */
+    :root{
+      --bg-top:    #0f0f0f;
+      --bg-bot:    #161616;
+      --text:      #f2f2f2;
+      --muted:     #b9b9b9;
+      --accent:    #a8a8a8;   /* קו ניטרלי */
+      --safe-x:    120px;     /* שוליים אופקיים */
+      --safe-y:    64px;      /* שול עליון/תחתון */
+      --gap:       24px;      /* רווח קבוע מתחת לכותרת */
+      --title-band:       132px;  /* גובה רצועת כותרת בשקפים רגילים */
+      --title-band-hero:  180px;  /* גובה רצועת כותרת בשקף פתיחה */
+    }
+
+    html, body { height: 100%; }
+    body{
+      margin: 0;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--bg-top), var(--bg-bot));
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+      overflow: hidden; /* ניהול גלילה ידנית לצורך קפיצה שקף-שקף */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ====== מכולת המצגת ====== */
+    .deck{
+      height: 100vh;
+      width: 100vw;
+      overflow-y: auto;     /* גלילה פנימית של המצגת */
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      outline: none;
+    }
+
+    /* ====== שקף, מסגרת וטיפוגרפיה אחידה ====== */
+    section.slide{
+      height: 100vh; width: 100vw;
+      scroll-snap-align: start;
+      position: relative;
+      text-align: right;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) no-repeat;
+    }
+
+    .frame{
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: var(--safe-x) 1fr var(--safe-x);
+      grid-template-rows:
+        var(--safe-y)        /* שול עליון */
+        var(--title-band)    /* רצועת כותרת קבועה */
+        var(--gap)           /* רווח קבוע מתחת לכותרת */
+        1fr                  /* אזור הבולטים/תוכן */
+        var(--safe-y);       /* שול תחתון */
+    }
+    .hero .frame{
+      grid-template-rows: var(--safe-y) var(--title-band-hero) var(--gap) 1fr var(--safe-y);
+    }
+
+    header.titleband{
+      grid-column: 2; grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-start;
+      overflow: clip;
+    }
+    main.bullets{
+      grid-column: 2; grid-row: 4;
+      align-self: start;
+    }
+
+    h1{ font-size: 64px; line-height: 1.1; margin: 0; letter-spacing: .3px; }
+    h2{ font-size: 48px; line-height: 1.2; margin: 0; }
+    p.sub{ font-size: 24px; color: var(--muted); margin: 12px 0 0 0; }
+    ul{ margin:0; padding:0; list-style: disc inside; font-size: 32px; line-height:1.5; }
+    li{ margin: 10px 0; }
+    .hr{ height:3px; width:140px; background:var(--accent); border-radius:2px; margin-top:16px; }
+    .slide-number{ position:absolute; left:40px; bottom:40px; color:var(--muted); font-size:20px; }
+    .footer-hint{ position:fixed; right:24px; bottom:24px; color:var(--muted); font-size:16px; opacity:.9; }
+
+    /* ====== טיפוסי תמונות ====== */
+
+    /* 1) תמונה לצד בולטים */
+    .two-col{
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 40px;
+      align-items: center;
+      width: 100%;
+    }
+    .img-contain{
+      max-width: 100%;
+      max-height: 62vh;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      background: #272727;
+    }
+
+    /* 2) רקע מלא */
+    .bg-cover{
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+    .bg-cover::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.48), rgba(0,0,0,0.36));
+      pointer-events:none;
+    }
+
+    /* 3) Figure + Caption */
+    figure{ margin:0; }
+    figcaption{ color:#c8c8c8; font-size:18px; margin-top:8px; }
+
+    /* 4) רצועת-צד (Side banner) */
+    .with-banner .frame{ position: relative; }
+    .side-banner{
+      position: absolute; top: 0; bottom: 0; left: 0;
+      width: min(28vw, 520px);
+      background-size: cover; background-position: center;
+      opacity: .25; pointer-events: none;
+    }
+    .with-banner .frame::before{
+      content:""; position:absolute; left:0; top:0; bottom:0;
+      width: min(28vw, 520px);
+      background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+      pointer-events:none;
+    }
+
+    /* 5) גריד תמונות */
+    .image-grid{
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 8px;
+    }
+    .image-grid img{
+      width: 100%; height: 36vh;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.32);
+      background: #2b2b2b;
+    }
+
+    /* 6) SVG inline (סגנון עדין) */
+    .svg-wrap{ background:#1d1d1d; border-radius:12px; padding:16px; box-shadow:0 10px 24px rgba(0,0,0,.32); }
+
+    @media (max-width: 1400px){
+      :root{ --safe-x: 80px; --safe-y: 48px; --title-band: 112px; --title-band-hero: 160px; }
+      h1{ font-size: 48px; } h2{ font-size: 38px; } ul{ font-size: 26px; }
+      .image-grid img{ height: 28vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck" tabindex="0" aria-label="presentation">
+
+    <!-- ===== שקף 1: פתיחה (Hero) ===== -->
+    <section class="slide hero">
+      <div class="frame">
+        <header class="titleband">
+          <h1>דמו: סוגים שונים של תמונות</h1>
+          <p class="sub">תבנית מצגת HTML • בולטים + תצוגות תמונה מגוונות</p>
+          <div class="hr"></div>
+        </header>
+        <main class="bullets"></main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 2: <img> לצד בולטים ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>תמונה לצד בולטים (IMG)</h2></header>
+        <main class="bullets">
+          <div class="two-col">
+            <ul>
+              <li>תצוגה גמישה עם יחס ממדים שמור.</li>
+              <li>מתאים לדיאגרמות/צילום תעשייתי.</li>
+              <li>מומלץ להשתמש בתמונות ≥1600px רוחב.</li>
+            </ul>
+            <img class="img-contain" alt="Flow Diagram (Demo)"
+                 src="Picture6_2.png"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 3: רקע מלא ===== -->
+    <section class="slide bg-cover"
+      style="background-image:url('Picture1.png')">
+      <div class="frame">
+        <header class="titleband"><h2>רקע מלא (Full‑bleed)</h2></header>
+        <main class="bullets">
+          <ul>
+            <li>שקף ויזואלי עם שכבת כהות לשמירת קריאות.</li>
+            <li>מומלץ 1920×1080 (או 3840×2160 ל‑Retina).</li>
+          </ul>
+        </main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 4: Figure + Caption ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>Figure + Caption</h2></header>
+        <main class="bullets">
+          <figure>
+            <img class="img-contain" alt="Equilibrium Surface (Demo)"
+                 src="Picture6_2.png"><text x='50%' y='50%' text-anchor='middle' fill='%23f0f0f0' font-size='56' font-family='Segoe UI, Arial'>Equilibrium Surface (Demo)</text></svg>">
+            <figcaption>משטח שיווי‑משקל (דמו). החלף בקובץ PNG/WEBP שלך לפי הצורך.</figcaption>
+          </figure>
+        </main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 5: <picture> עם ארט-דירקשן ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>&lt;picture&gt; – ארט‑דירקשן לפי רוחב</h2></header>
+        <main class="bullets">
+          <ul>
+            <li>תמונה שונה למסכים רחבים/צרים.</li>
+            <li>כאן שתי גרסאות SVG כדמו (החלף ל‑WEBP/PNG אמיתיים).</li>
+          </ul>
+          <picture>
+            data:image/svg+xml;utf8,<?xml version=<svg xmlns='http://www.w3.org/2000/svg' width='1800' height='800'><rect width='100%' height='100%' fill='%23313131'/><text x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23ffffff' font-size='64' font-family='Segoe UI, Arial'>Large Art‑Directed Image</text></svg>">
+            <img class="img-contain" alt="Responsive Art Image (Demo)"
+                 src="Picture6_2.png";utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='900' height='600'><rect width='100%' height='100%' fill='%232c2c2c'/><text x='50%25' y='50%25' text-anchor='middle' dominant</text></svg>">
+          </picture>
+        </main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 6: SVG Inline ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>SVG Inline (וקטורי חד בכל רזולוציה)</h2></header>
+        <main class="bullets">
+          <div class="svg-wrap">
+            <svg width="100%" height="240" viewBox="0 0 900 240" role="img" aria-label="Inline SVG Demo">
+              <defs>
+                <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%"  stop-color="#6b6b6b"/>
+                  <stop offset="100%" stop-color="#3a3a3a"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="900" height="240" rx="14" fill="url(#lg)"/>
+              <g fill="none" stroke="#bdbdbd" stroke-width="6" opacity="0.9">
+                <path d="M60,170 C180,60 360,60 480,170"/>
+                <path d="M420,170 C540,60 720,60 840,170"/>
+              </g>
+              <text x="450" y="128" text-anchor="middle" fill="#f2f2f2" font-size="42" font-family="Segoe UI, Arial">Inline SVG • Logo/Diagram</text>
+            </svg>
+          </div>
+        </main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 7: רצועת-צד (Side Banner) ===== -->
+    <section class="slide with-banner">
+      <div class="frame">
+        <div class="side-banner"
+             style="background-image:url('Picture6_2.png')"></div>
+        <header class="titleband"><h2>רצועת‑צד (Side‑banner)</h2></header>
+        <main class="bullets">
+          <ul>
+            <li>מוסיף אופי ויזואלי מבלי להעמיס על הבולטים.</li>
+            <li>הכנס תמונת טקסטורה/צילום; השקיפות עדינה.</li>
+          </ul>
+        </main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+
+    <!-- ===== שקף 8: Grid תמונות ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>Grid תמונות (2×2 או 2×1)</h2></header>
+        <main class="bullets">
+          <ul><li>טעינה עצלה + התאמת חתכים עם <code>object-fit: cover</code>.</li></ul>
+          <div class="image-grid">
+            data:image/svg+xml;utf8,<?xml version=<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='%23333333'/><text x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23f7f7f7' font-size='42' font-family='Segoe UI, Arial'>Sample A</text></svg>">
+            <img alt="Sample B" loading="lazy" decoding="async"
+                 src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='%232a2a2a'/><text x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23f7f7f7' font-size='42' font-family='Segoe UI, Arial'>Sample B</text></svg>">
+on>
+
+    <!-- ===== שקף 9: תמונה Base64 (דוגמת SVG מוצפן Base64) ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>תמונה מוכמנת Base64 (קובץ יחיד)</h2></header>
+        <main class="bullets">
+          <ul>
+            <li>טוב למצבים בלי תיקיות נפרדות.</li>
+            <li>כאן: SVG קטן שקודד ל‑Base64 (אפשר גם PNG/JPEG).</li>
+          </ul>
+          <img class="img-contain" alt="Base64 Embedded (Demo)"
+               src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjE2MDAiIGhlaWdodD0iOTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzAzMDMwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiNmZmYiIGZvbnQtc2l6ZT0iNjQiIGZvbnQtZmFtaWx5PSJTZWdvZSBVSSwgQXJpYWwiPkJhc2U2NCBFbWJlZGRlZCBJbWFnZTwvdGV4  </div>
+    </section>
+
+    <!-- ===== שקף 10: סיכום ===== -->
+    <section class="slide">
+      <div class="frame">
+        <header class="titleband"><h2>סיכום</h2></header>
+        <main class="bullets">
+          <ul>
+            <li>החלף את ה‑Data URI בקבצים שלך (PNG/WEBP/JPEG/SVG).</li>
+            <li>לשקפים חזקים – העדף רקע מלא + שכבת כהות.</li>
+            <li>לנתונים – תמונה לצד בולטים או Grid.</li>
+          </ul>
+        </main>
+        <div class="slide-number"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="footer-hint">גלילה: 3× קליקים לשקף • PgDn / PgUp • חצים • רווח • Home / End</div>
+
+  <script>
+    (() => {
+      const deck   = document.getElementById('deck');
+      const slides = Array.from(deck.querySelectorAll('section.slide'));
+      const total  = slides.length;
+      let currentIndex = 0;
+
+      // מיספור שקפים
+      slides.forEach((s, i) => {
+        const el = document.createElement('div');
+        el.className = 'slide-number';
+        el.textContent = `${i+1} / ${total}`;
+        s.appendChild(el);
+      });
+
+      // איתור השקף הפעיל (שומר אינדקס עקבי)
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = slides.indexOf(entry.target);
+            if (idx >= 0) currentIndex = idx;
+          }
+        });
+      }, { root: deck, threshold: 0.6 });
+      slides.forEach(s => io.observe(s));
+
+      function go(idx){
+        if (idx < 0) idx = 0;
+        if (idx > total - 1) idx = total - 1;
+        currentIndex = idx;
+        slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function next(){ go(currentIndex + 1); }
+      function prev(){ go(currentIndex - 1); }
+
+      // --- ניווט מקלדת: PgDn/PgUp/חצים/רווח/Home/End ---
+      deck.addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (k === 'PageDown' || k === 'ArrowDown' || (k === ' ' && !e.shiftKey)) { e.preventDefault(); next(); }
+        if (k === 'PageUp'   || k === 'ArrowUp'   || (k === ' ' &&  e.shiftKey)) { e.preventDefault(); prev(); }
+        if (k === 'Home') { e.preventDefault(); go(0); }
+        if (k === 'End')  { e.preventDefault(); go(total - 1); }
+      });
+
+      // --- גלילה עם 3 "קליקים" לפני מעבר שקף ---
+      const REQUIRED_STEPS = 3;   // כמה קליקים של גלגלת נדרשים למעבר
+      const IDLE_RESET_MS  = 900; // איפוס ספירה אם עבר זמן בין גלילות
+      const LOCK_MS        = 650; // נעילה קצרה אחרי מעבר (אנימציה)
+      const NOISE_TH       = 10;  // סף לדלתא כדי לסנן רעש
+
+      let stepDir = 0;            // 1=מטה, -1=מעלה
+      let stepCount = 0;          // כמה קליקים רצופים באותו כיוון
+      let idleTimer = null;
+      let pagingLock = false;
+
+      function resetSteps(){
+        stepDir = 0;
+        stepCount = 0;
+        if (idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+      }
+      function armIdleReset(){
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(resetSteps, IDLE_RESET_MS);
+      }
+
+      deck.addEventListener('wheel', (e) => {
+        if (e.ctrlKey) return;     // אפשר זום עם Ctrl+גלגלת
+        e.preventDefault();
+        if (pagingLock) return;
+
+        const dy = e.deltaY || 0;
+        if (Math.abs(dy) < NOISE_TH) return; // סינון רעש
+        const dir = dy > 0 ? 1 : -1;
+
+        if (stepDir === 0 || dir === stepDir){
+          stepDir = dir;
+          stepCount += 1;
+        } else {
+          stepDir = dir;
+          stepCount = 1;
+        }
+
+        if (stepCount >= REQUIRED_STEPS){
+          pagingLock = true;
+          (stepDir > 0 ? next() : prev());
+          resetSteps();
+          setTimeout(() => { pagingLock = false; }, LOCK_MS);
+        } else {
+          armIdleReset();
+        }
+      }, { passive: false });
+
+      // מחוות מגע בסיסיות (Swipe)
+      let touchStartY = null;
+      deck.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      deck.addEventListener('touchend', (e) => {
+        if (touchStartY == null) return;
+        const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : touchStartY;
+        const dy = touchStartY - endY;
+        if (Math.abs(dy) > 40) (dy > 0 ? next() : prev());
+        touchStartY = null;
+      }, { passive: true });
+
+      // פוקוס לניווט מיידי ושמירה על מיקום בשינוי גודל
+      deck.focus();
+      window.addEventListener('resize', () => go(currentIndex));
+    })();
+  </script>
+</body>
+</html>
