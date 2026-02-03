@@ -1,36 +1,12 @@
 # R&D Portfolio: Interactive Presentations
 
-Этот репозиторий содержит интерактивные презентации и инструменты визуализации данных, разработанные для R&D проектов. Все материалы оптимизированы для просмотра как на десктопе, так и на мобильных устройствах (Samsung S24 Ultra и др.).
+This repository contains interactive presentations and data visualization tools developed for R&D projects. All materials are optimized for seamless viewing on both desktop and mobile devices.
 
-## 🚀 Быстрый доступ
-Все презентации доступны в виде веб-сайта через GitHub Pages:  
+## 🚀 Quick Access
+All presentations are hosted as a live website via GitHub Pages:  
 https://vladgap.github.io/Portfolio/  
-👉 **[ОТКРЫТЬ ПОРТФОЛИО](https://vladgap.github.io/Portfolio/)**
+👉 **[OPEN PORTFOLIO](https://vladgap.github.io/Portfolio/)**
 
 ---
-
-## 📂 Структура репозитория
-
-*   **`index.html`** — Главная страница-хаб со ссылками на все проекты.
-*   **`HTML_templates/`** — Шаблоны презентаций на базе Swiper.js и Reveal.js.
-    *   `HTML Swiper demo 1.html` — Базовый мобильный шаблон с 3-мя рамками.
-*   **`assets/`** (рекомендуется) — Общие изображения, логотипы и стили.
-
----
-
-## 🛠 Технологический стек
-*   **Swiper.js** — для плавной мобильной навигации и тач-событий.
-*   **Plotly.js** — для интерактивных графиков и анализа данных.
-*   **Reveal.js** — для классических презентационных переходов.
-*   **GitHub Pages** — для хостинга и быстрого доступа с мобильных устройств.
-
----
-
-## 📝 Заметки для разработки
-1.  **Пути к файлам:** Используйте относительные пути (`src="image.jpg"`).
-2.  **Регистр имен:** GitHub чувствителен к регистру (`Pic.jpg` и `pic.jpg` — разные файлы).
-3.  **Обновление:** После пуша в `main`, изменения на сайте появляются в течение 1-2 минут.
-
----
-**Автор:** Владимир Гапоненко  
-**Специализация:** Chemical Engineering / Data Science R&D
+**Author:** Vladimir Gaponenko  
+**Specialization:** Chemical Engineering / Data Science R&D
