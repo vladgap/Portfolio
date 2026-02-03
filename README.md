@@ -4,6 +4,7 @@
 
 ## 🚀 Быстрый доступ
 Все презентации доступны в виде веб-сайта через GitHub Pages:
+https://vladgap.github.io/Portfolio/
 👉 **[ОТКРЫТЬ ПОРТФОЛИО](https://vladgap.github.io/Portfolio/)**
 
 ---
