@@ -4,7 +4,7 @@ This repository contains interactive presentations and data visualization tools 
 
 ## 🚀 Quick Access
 All presentations are hosted as a live website via GitHub Pages:  
-https://vladgap.github.io/Portfolio/  
+👉 https://vladgap.github.io/Portfolio/  
 👉 **[OPEN PORTFOLIO](https://vladgap.github.io/Portfolio/)**
 
 ---
